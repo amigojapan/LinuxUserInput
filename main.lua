@@ -9,6 +9,7 @@ rectBorder=nil
 rectEdit=nil
 lblTitle=nil
 editBuffer=nil
+local _callback=nil
 function drawBorder(x,y,width,height)
 		rectBorder = display.newRect(x,y,width,height)
 		rectBorder.strokeWidth = 5
@@ -32,19 +33,32 @@ function removeScreenKeyboard()
 	for key, value in ipairs(keysLablesTable) do
 		--print(value)
 		value.isVisible=false
-		value:removeSelf()
+		if value.removeSelf then
+			value:removeSelf()
+		end
 	end
 end
 
 function removerInputBox()
-	rectBorder:removeSelf()
-	rectEdit:removeSelf()
-	lblTitle:removeSelf()
-	editBuffer:removeSelf()
-	okButton:removeSelf()
+	if rectBorder.removeSelf then
+		rectBorder:removeSelf()
+	end
+	if rectEdit.removeSelf then
+		rectEdit:removeSelf()
+	end
+	if lblTitle.removeSelf then
+		lblTitle:removeSelf()
+	end
+	if editBuffer.removeSelf then
+		editBuffer:removeSelf()
+	end
+	if okButton.removeSelf then
+		okButton:removeSelf()
+	end
 	removeScreenKeyboard()
 	Runtime:removeEventListener( "enterFrame", frameUpdate )
 	Runtime:removeEventListener( "key", onKeyEvent )
+	
 end
 
 --handle keystrokes
@@ -54,6 +68,7 @@ local action = {}
 function addInputToBuffer(downkey)
 	if downkey == "enter" then
 		print("inputBuffer:"..inputBuffer)
+		_callback(inputBuffer)
 		inputBuffer=""
 		downkey=""
 		removerInputBox()
@@ -109,6 +124,7 @@ end
 webView=nil
 function myHelpTouchListener( event )
 	print("ok clicked!")
+	_callback(inputBuffer)
 	removerInputBox()
     return true  -- Prevents tap/touch propagation to underlying objects
 end
@@ -122,7 +138,6 @@ local paint = {
 }
 okButton = display.newRect(offsetx, offsety, 200, 100 )
 okButton.fill = paint
-
 okButton:addEventListener( "touch", myHelpTouchListener )  -- Add a "touch" listener to the obj
 
 local paint = {
@@ -155,6 +170,7 @@ function clickOnScreenKeys(event)
 end
 
 function bringUpScreenKeyboard()
+	keysTable={}
 	table.insert(keysTable, "1")
 	table.insert(keysTable, "2")
 	table.insert(keysTable, "3")
@@ -167,8 +183,8 @@ function bringUpScreenKeyboard()
 	table.insert(keysTable, "0")
 	table.insert(keysTable, "-")
 	table.insert(keysTable, "<<")
-	xoffset=100
-	yoffset=100
+	local xoffset=100
+	local yoffset=100
 	for key, value in ipairs(keysTable) do
 		local lable = display.newText( value, xoffset, yoffset, "fonts/ume-tgc5.ttf", 50 )
 		lable:setFillColor( 0.82, 0.86, 1 )
@@ -242,7 +258,9 @@ function bringUpScreenKeyboard()
 	
 end
 
-function showInputBox(prompt)
+
+function showInputBox(prompt,callback)
+	_callback=callback
 	drawBorder(display.contentCenterX, display.contentCenterY, 1000-100, 800-50)
 	drawInputPrompt(display.contentCenterX, display.contentCenterY, 1000-100, 800-50,prompt)
 	Runtime:addEventListener( "enterFrame", frameUpdate )
@@ -250,5 +268,14 @@ function showInputBox(prompt)
 	--maybe do this optionally if on touchscreen
 	bringUpScreenKeyboard()	
 end
---call this in your program
-showInputBox("Filename:")
+--call the following way in your program
+function callback(userinput)
+	print("the user inputed"..userinput)
+	native.showAlert(
+		"the user inputed", -- Title of the alert
+		"the user inputed:"..userinput, -- Message content
+		{ "OK" } -- Button labels
+		--onComplete -- Listener for button clicks
+	)
+end
+showInputBox("your promt:",callback)
