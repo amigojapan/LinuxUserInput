@@ -42,16 +42,14 @@ drawInputPrompt(display.contentCenterX, display.contentCenterY, 1000-100, 800-50
 downkey=""
 inputBuffer=""
 local action = {}
-function frameUpdate()
-	local keyDown = false
-	-- See if one of the selected action buttons is down and move the knight.
+function addInputToBuffer(downkey)
 	if downkey == "enter" then
 		print("inputBuffer:"..inputBuffer)
 		inputBuffer=""
 		downkey=""
 		removerInputBox()
 	end
-	if downkey == "deleteBack" or downkey == "back" then
+	if downkey == "deleteBack" or downkey == "back" or downkey == "<<" then
 		inputBuffer = inputBuffer:sub(1, -2)--deletes last character off the buffer
 		print("delete pressed")
 		downkey=""
@@ -82,6 +80,14 @@ function frameUpdate()
 	end
 	
 	editBuffer.text=inputBuffer
+end
+function frameUpdate()
+	local keyDown = false
+	-- See if one of the selected action buttons is down and move the knight.
+	if downkey then
+		addInputToBuffer(downkey)
+		downkey=""
+	end
 end
 
 function onKeyEvent( event )
@@ -131,6 +137,14 @@ function getFunctionName()
     local info = debug.getinfo(2, "n")
     return info.name or "anonymous"
 end
+function clickOnScreenKeys(event)
+	if event.phase == "ended" then
+		print("clickOnScreenKeys called")
+		print(event.target.text)
+		addInputToBuffer(event.target.text)
+	end
+end
+
 function bringUpScreenKeyboard()
 	table.insert(keysTable, "1")
 	table.insert(keysTable, "2")
@@ -143,21 +157,15 @@ function bringUpScreenKeyboard()
 	table.insert(keysTable, "9")
 	table.insert(keysTable, "0")
 	table.insert(keysTable, "-")
+	table.insert(keysTable, "<<")
 	xoffset=100
 	yoffset=100
 	for key, value in ipairs(keysTable) do
 		local lable = display.newText( value, xoffset, yoffset, "fonts/ume-tgc5.ttf", 50 )
 		lable:setFillColor( 0.82, 0.86, 1 )
+		lable:addEventListener( "touch", clickOnScreenKeys )
 		table.insert(keysLablesTable, label)
 		xoffset=xoffset+50
-		-- Assign the function to a key in the table
-		functionTable[value] = function(param)
-			print(getFunctionName())
-		end
-
-		-- Call the function using the string key
-		
-		Runtime:addEventListener( "touch", functionTable[value] )
 	end
 	yoffset=yoffset+50
 	xoffset=125
@@ -175,6 +183,7 @@ function bringUpScreenKeyboard()
 	for key, value in ipairs(keysTable) do
 		local lable = display.newText( value, xoffset, yoffset, "fonts/ume-tgc5.ttf", 50 )
 		lable:setFillColor( 0.82, 0.86, 1 )
+		lable:addEventListener( "touch", clickOnScreenKeys )
 		table.insert(keysLablesTable, label)
 		xoffset=xoffset+50
 	end
@@ -193,6 +202,7 @@ function bringUpScreenKeyboard()
 	for key, value in ipairs(keysTable) do
 		local lable = display.newText( value, xoffset, yoffset, "fonts/ume-tgc5.ttf", 50 )
 		lable:setFillColor( 0.82, 0.86, 1 )
+		lable:addEventListener( "touch", clickOnScreenKeys )
 		table.insert(keysLablesTable, label)
 		xoffset=xoffset+50
 	end
@@ -210,6 +220,7 @@ function bringUpScreenKeyboard()
 	for key, value in ipairs(keysTable) do
 		local lable = display.newText( value, xoffset, yoffset, "fonts/ume-tgc5.ttf", 50 )
 		lable:setFillColor( 0.82, 0.86, 1 )
+		lable:addEventListener( "touch", clickOnScreenKeys )
 		table.insert(keysLablesTable, label)
 		xoffset=xoffset+50
 	end
@@ -217,6 +228,7 @@ function bringUpScreenKeyboard()
 	xoffset=350
 	local lable = display.newText( "space", xoffset, yoffset, "fonts/ume-tgc5.ttf", 50 )
 	lable:setFillColor( 0.82, 0.86, 1 )
+	lable:addEventListener( "touch", clickOnScreenKeys )
 	table.insert(keysLablesTable, label)
 	
 end
