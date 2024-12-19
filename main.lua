@@ -27,16 +27,25 @@ function drawInputPrompt(x,y,width,height,prompt)
 		rectEdit:setStrokeColor( 1, 1, 1 )
 end
 
+function removeScreenKeyboard()
+	print("RemoveScreenKeyboard called")
+	for key, value in ipairs(keysLablesTable) do
+		--print(value)
+		value.isVisible=false
+		value:removeSelf()
+	end
+end
+
 function removerInputBox()
 	rectBorder:removeSelf()
 	rectEdit:removeSelf()
 	lblTitle:removeSelf()
 	editBuffer:removeSelf()
 	okButton:removeSelf()
+	removeScreenKeyboard()
+	Runtime:removeEventListener( "enterFrame", frameUpdate )
+	Runtime:removeEventListener( "key", onKeyEvent )
 end
-
-drawBorder(display.contentCenterX, display.contentCenterY, 1000-100, 800-50)
-drawInputPrompt(display.contentCenterX, display.contentCenterY, 1000-100, 800-50,"Enter your input:")
 
 --handle keystrokes
 downkey=""
@@ -164,7 +173,7 @@ function bringUpScreenKeyboard()
 		local lable = display.newText( value, xoffset, yoffset, "fonts/ume-tgc5.ttf", 50 )
 		lable:setFillColor( 0.82, 0.86, 1 )
 		lable:addEventListener( "touch", clickOnScreenKeys )
-		table.insert(keysLablesTable, label)
+		table.insert(keysLablesTable, lable)
 		xoffset=xoffset+50
 	end
 	yoffset=yoffset+50
@@ -184,7 +193,7 @@ function bringUpScreenKeyboard()
 		local lable = display.newText( value, xoffset, yoffset, "fonts/ume-tgc5.ttf", 50 )
 		lable:setFillColor( 0.82, 0.86, 1 )
 		lable:addEventListener( "touch", clickOnScreenKeys )
-		table.insert(keysLablesTable, label)
+		table.insert(keysLablesTable, lable)
 		xoffset=xoffset+50
 	end
 	yoffset=yoffset+50
@@ -203,7 +212,7 @@ function bringUpScreenKeyboard()
 		local lable = display.newText( value, xoffset, yoffset, "fonts/ume-tgc5.ttf", 50 )
 		lable:setFillColor( 0.82, 0.86, 1 )
 		lable:addEventListener( "touch", clickOnScreenKeys )
-		table.insert(keysLablesTable, label)
+		table.insert(keysLablesTable, lable)
 		xoffset=xoffset+50
 	end
 	yoffset=yoffset+50
@@ -221,7 +230,7 @@ function bringUpScreenKeyboard()
 		local lable = display.newText( value, xoffset, yoffset, "fonts/ume-tgc5.ttf", 50 )
 		lable:setFillColor( 0.82, 0.86, 1 )
 		lable:addEventListener( "touch", clickOnScreenKeys )
-		table.insert(keysLablesTable, label)
+		table.insert(keysLablesTable, lable)
 		xoffset=xoffset+50
 	end
 	yoffset=yoffset+50
@@ -229,9 +238,17 @@ function bringUpScreenKeyboard()
 	local lable = display.newText( "space", xoffset, yoffset, "fonts/ume-tgc5.ttf", 50 )
 	lable:setFillColor( 0.82, 0.86, 1 )
 	lable:addEventListener( "touch", clickOnScreenKeys )
-	table.insert(keysLablesTable, label)
+	table.insert(keysLablesTable, lable)
 	
 end
-Runtime:addEventListener( "enterFrame", frameUpdate )
-Runtime:addEventListener( "key", onKeyEvent )
-bringUpScreenKeyboard()
+
+function showInputBox(prompt)
+	drawBorder(display.contentCenterX, display.contentCenterY, 1000-100, 800-50)
+	drawInputPrompt(display.contentCenterX, display.contentCenterY, 1000-100, 800-50,prompt)
+	Runtime:addEventListener( "enterFrame", frameUpdate )
+	Runtime:addEventListener( "key", onKeyEvent )
+	--maybe do this optionally if on touchscreen
+	bringUpScreenKeyboard()	
+end
+--call this in your program
+showInputBox("Filename:")
