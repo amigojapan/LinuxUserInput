@@ -111,7 +111,7 @@ local paint = {
     type = "image",
     filename = "img/ok.png"
 }
-okButton = display.newRect(offsetx, offsety, 150, 150 )
+okButton = display.newRect(offsetx, offsety, 200, 100 )
 okButton.fill = paint
 
 okButton:addEventListener( "touch", myHelpTouchListener )  -- Add a "touch" listener to the obj
