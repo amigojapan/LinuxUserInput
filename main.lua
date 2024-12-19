@@ -51,7 +51,7 @@ function frameUpdate()
 		downkey=""
 		removerInputBox()
 	end
-	if downkey == "deleteBack" then
+	if downkey == "deleteBack" or downkey == "back" then
 		inputBuffer = inputBuffer:sub(1, -2)--deletes last character off the buffer
 		print("delete pressed")
 		downkey=""
@@ -98,8 +98,8 @@ function myHelpTouchListener( event )
     return true  -- Prevents tap/touch propagation to underlying objects
 end
 
-offsetx=100
-offsety=100
+offsetx=500
+offsety=700
 
 local paint = {
     type = "image",
@@ -124,6 +124,102 @@ if system.getInfo("platform")=="html5" then
 else
 	okButton.isVisible=true
 end
+keysTable={}
+keysLablesTable={}
+local functionTable={}
+function getFunctionName()
+    local info = debug.getinfo(2, "n")
+    return info.name or "anonymous"
+end
+function bringUpScreenKeyboard()
+	table.insert(keysTable, "1")
+	table.insert(keysTable, "2")
+	table.insert(keysTable, "3")
+	table.insert(keysTable, "4")
+	table.insert(keysTable, "5")
+	table.insert(keysTable, "6")
+	table.insert(keysTable, "7")
+	table.insert(keysTable, "8")
+	table.insert(keysTable, "9")
+	table.insert(keysTable, "0")
+	table.insert(keysTable, "-")
+	xoffset=100
+	yoffset=100
+	for key, value in ipairs(keysTable) do
+		local lable = display.newText( value, xoffset, yoffset, "fonts/ume-tgc5.ttf", 50 )
+		lable:setFillColor( 0.82, 0.86, 1 )
+		table.insert(keysLablesTable, label)
+		xoffset=xoffset+50
+		-- Assign the function to a key in the table
+		functionTable[value] = function(param)
+			print(getFunctionName())
+		end
 
+		-- Call the function using the string key
+		
+		Runtime:addEventListener( "touch", functionTable[value] )
+	end
+	yoffset=yoffset+50
+	xoffset=125
+	keysTable={}
+	table.insert(keysTable, "q")
+	table.insert(keysTable, "w")
+	table.insert(keysTable, "e")
+	table.insert(keysTable, "r")
+	table.insert(keysTable, "t")
+	table.insert(keysTable, "y")
+	table.insert(keysTable, "u")
+	table.insert(keysTable, "i")
+	table.insert(keysTable, "o")
+	table.insert(keysTable, "p")
+	for key, value in ipairs(keysTable) do
+		local lable = display.newText( value, xoffset, yoffset, "fonts/ume-tgc5.ttf", 50 )
+		lable:setFillColor( 0.82, 0.86, 1 )
+		table.insert(keysLablesTable, label)
+		xoffset=xoffset+50
+	end
+	yoffset=yoffset+50
+	xoffset=150
+	keysTable={}
+	table.insert(keysTable, "a")
+	table.insert(keysTable, "s")
+	table.insert(keysTable, "d")
+	table.insert(keysTable, "f")
+	table.insert(keysTable, "g")
+	table.insert(keysTable, "h")
+	table.insert(keysTable, "j")
+	table.insert(keysTable, "k")
+	table.insert(keysTable, "l")
+	for key, value in ipairs(keysTable) do
+		local lable = display.newText( value, xoffset, yoffset, "fonts/ume-tgc5.ttf", 50 )
+		lable:setFillColor( 0.82, 0.86, 1 )
+		table.insert(keysLablesTable, label)
+		xoffset=xoffset+50
+	end
+	yoffset=yoffset+50
+	xoffset=175
+	keysTable={}
+	table.insert(keysTable, "z")
+	table.insert(keysTable, "x")
+	table.insert(keysTable, "c")
+	table.insert(keysTable, "v")
+	table.insert(keysTable, "b")
+	table.insert(keysTable, "n")
+	table.insert(keysTable, "m")
+	table.insert(keysTable, "_")
+	for key, value in ipairs(keysTable) do
+		local lable = display.newText( value, xoffset, yoffset, "fonts/ume-tgc5.ttf", 50 )
+		lable:setFillColor( 0.82, 0.86, 1 )
+		table.insert(keysLablesTable, label)
+		xoffset=xoffset+50
+	end
+	yoffset=yoffset+50
+	xoffset=350
+	local lable = display.newText( "space", xoffset, yoffset, "fonts/ume-tgc5.ttf", 50 )
+	lable:setFillColor( 0.82, 0.86, 1 )
+	table.insert(keysLablesTable, label)
+	
+end
 Runtime:addEventListener( "enterFrame", frameUpdate )
 Runtime:addEventListener( "key", onKeyEvent )
+bringUpScreenKeyboard()
