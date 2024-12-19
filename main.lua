@@ -10,6 +10,42 @@ rectEdit=nil
 lblTitle=nil
 editBuffer=nil
 local _callback=nil
+
+function myHelpTouchListener( event )
+	print("ok clicked!")
+	_callback(inputBuffer)
+	removerInputBox()
+    return true  -- Prevents tap/touch propagation to underlying objects
+end
+
+
+
+offsetx=500
+offsety=600
+
+local paint = {
+    type = "image",
+    filename = "img/ok.png"
+}
+okButton = display.newRect(offsetx, offsety, 200, 100 )
+okButton.fill = paint
+okButton:addEventListener( "touch", myHelpTouchListener )  -- Add a "touch" listener to the obj
+okButton.isVisible=false
+local paint = {
+    type = "image",
+    filename = "img/ok.png"
+}
+myHelpCloseButton = display.newRect(offsetx, offsety, 150, 150 )
+myHelpCloseButton.fill = paint
+
+myHelpCloseButton:addEventListener( "touch", myHelpTouchListener )  -- Add a "touch" listener to the obj
+myHelpCloseButton.isVisible=false
+if system.getInfo("platform")=="html5" then
+	okButton.isVisible=false
+else
+	okButton.isVisible=false
+end
+
 function drawBorder(x,y,width,height)
 		rectBorder = display.newRect(x,y,width,height)
 		rectBorder.strokeWidth = 5
@@ -20,9 +56,9 @@ editBuffer=nil
 function drawInputPrompt(x,y,width,height,prompt)
 		lblTitle = display.newText( prompt, x, y, "fonts/ume-tgc5.ttf", 50 )
 		lblTitle:setFillColor( 0.82, 0.86, 1 )
-		editBuffer = display.newText( "", x, y+200, "fonts/ume-tgc5.ttf", 50 )
+		editBuffer = display.newText( "", x, y+100, "fonts/ume-tgc5.ttf", 50 )
 		editBuffer:setFillColor( 0.82, 0.86, 1 )
-		rectEdit = display.newRect(x,y+200,width-500,height-700)
+		rectEdit = display.newRect(x,y+100,width-300,height-700)
 		rectEdit.strokeWidth = 5
 		rectEdit:setFillColor( 1, 1 , 1, 0.5 )
 		rectEdit:setStrokeColor( 1, 1, 1 )
@@ -53,7 +89,8 @@ function removerInputBox()
 		editBuffer:removeSelf()
 	end
 	if okButton.removeSelf then
-		okButton:removeSelf()
+		--okButton:removeSelf()
+		okButton.isVisible=false
 	end
 	removeScreenKeyboard()
 	Runtime:removeEventListener( "enterFrame", frameUpdate )
@@ -122,38 +159,6 @@ function onKeyEvent( event )
 end
 --help button
 webView=nil
-function myHelpTouchListener( event )
-	print("ok clicked!")
-	_callback(inputBuffer)
-	removerInputBox()
-    return true  -- Prevents tap/touch propagation to underlying objects
-end
-
-offsetx=500
-offsety=700
-
-local paint = {
-    type = "image",
-    filename = "img/ok.png"
-}
-okButton = display.newRect(offsetx, offsety, 200, 100 )
-okButton.fill = paint
-okButton:addEventListener( "touch", myHelpTouchListener )  -- Add a "touch" listener to the obj
-
-local paint = {
-    type = "image",
-    filename = "img/ok.png"
-}
-myHelpCloseButton = display.newRect(offsetx, offsety, 150, 150 )
-myHelpCloseButton.fill = paint
-
-myHelpCloseButton:addEventListener( "touch", myHelpTouchListener )  -- Add a "touch" listener to the obj
-myHelpCloseButton.isVisible=false
-if system.getInfo("platform")=="html5" then
-	okButton.isVisible=false
-else
-	okButton.isVisible=true
-end
 keysTable={}
 keysLablesTable={}
 local functionTable={}
@@ -260,7 +265,9 @@ end
 
 
 function showInputBox(prompt,callback)
+	print("showInputBox called")
 	_callback=callback
+	okButton.isVisible=true
 	drawBorder(display.contentCenterX, display.contentCenterY, 1000-100, 800-50)
 	drawInputPrompt(display.contentCenterX, display.contentCenterY, 1000-100, 800-50,prompt)
 	Runtime:addEventListener( "enterFrame", frameUpdate )
@@ -278,4 +285,4 @@ function callback(userinput)
 		--onComplete -- Listener for button clicks
 	)
 end
-showInputBox("your promt:",callback)
+showInputBox("your prompt:",callback)
