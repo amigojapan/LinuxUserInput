@@ -288,7 +288,7 @@ function showInputBox(prompt,callback)
 	print("All objects set to isHitTestable = false")
 	
 	_callback=callback
-	if not okButton then
+	if okButton == nil then
 		--**fix bug of second click on ok button , it is nill and it crashes
 		offsetx=500
 		offsety=600
@@ -300,7 +300,6 @@ function showInputBox(prompt,callback)
 		okButton = display.newRect(offsetx, offsety, 200, 100 )
 		okButton.fill = paint
 		okButton:addEventListener( "touch", okButtonTouchListener )  -- Add a "touch" listener to the obj
-		okButton.isVisible=false		
 	end
 	okButton.isVisible=true
 	drawBorder(display.contentCenterX, display.contentCenterY, 1000-100, 800-50)
@@ -310,6 +309,7 @@ function showInputBox(prompt,callback)
 	--maybe do this optionally if on touchscreen
 	bringUpScreenKeyboard()	
 end
+
 
 --call the following way in your program
 function callback(userinput)
